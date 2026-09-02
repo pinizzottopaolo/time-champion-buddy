@@ -89,3 +89,8 @@ export function totaleEffettivo(righe: { attiva: boolean; tempo_effettivo: numbe
 export function totaleAssegnato(righe: { attiva: boolean; tempo_assegnato: number | null }[]) {
   return righe.reduce((acc, r) => acc + (r.attiva ? (r.tempo_assegnato ?? 0) : 0), 0);
 }
+
+export async function setCompletata(id: string, completata: boolean) {
+  const { error } = await supabase.from("schede").update({ completata }).eq("id", id);
+  if (error) throw error;
+}
