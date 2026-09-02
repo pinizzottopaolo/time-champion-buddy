@@ -5,10 +5,14 @@ import { OPERAZIONI } from "./operazioni";
 export type Scheda = Tables<"schede">;
 export type RigaScheda = Tables<"righe_scheda">;
 
-export async function listSchede() {
-  const { data, error } = await supabase
+export type Reparto = "confezione" | "stampa";
+
+export async function listSchede(reparto?: Reparto) {
+  let q = supabase
     .from("schede")
-    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)")
+    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)");
+  if (reparto) q = q.eq("reparto", reparto);
+  const { data, error } = await q
     .order("data", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -32,14 +36,17 @@ export async function getScheda(id: string) {
   return { scheda: data as Scheda, righe: (righe ?? []) as RigaScheda[] };
 }
 
-export async function creaScheda() {
+export async function creaScheda(
+  reparto: Reparto = "confezione",
+  dati: Partial<Scheda> = {},
+) {
   const { data: userData } = await supabase.auth.getUser();
   const uid = userData.user?.id;
   if (!uid) throw new Error("Sessione scaduta");
 
   const { data, error } = await supabase
     .from("schede")
-    .insert({ user_id: uid } as TablesInsert<"schede">)
+    .insert({ user_id: uid, reparto, ...dati } as TablesInsert<"schede">)
     .select("id")
     .single();
   if (error) throw error;
@@ -81,4 +88,9 @@ export function totaleEffettivo(righe: { attiva: boolean; tempo_effettivo: numbe
 
 export function totaleAssegnato(righe: { attiva: boolean; tempo_assegnato: number | null }[]) {
   return righe.reduce((acc, r) => acc + (r.attiva ? (r.tempo_assegnato ?? 0) : 0), 0);
+}
+
+export async function setCompletata(id: string, completata: boolean) {
+  const { error } = await supabase.from("schede").update({ completata }).eq("id", id);
+  if (error) throw error;
 }

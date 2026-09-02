@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as RepartoRepartoRouteImport } from './routes/reparto.$reparto'
 import { Route as SchedaIdRouteImport } from './routes/scheda.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RepartoRepartoRoute = RepartoRepartoRouteImport.update({
+  id: '/reparto/$reparto',
+  path: '/reparto/$reparto',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SchedaIdRoute = SchedaIdRouteImport.update({
   id: '/scheda/$id',
   path: '/scheda/$id',
@@ -32,30 +38,34 @@ const SchedaIdRoute = SchedaIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/scheda/$id'
+  fullPaths: '/' | '/auth' | '/reparto/$reparto' | '/scheda/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/scheda/$id'
-  id: '__root__' | '/' | '/auth' | '/scheda/$id'
+  to: '/' | '/auth' | '/reparto/$reparto' | '/scheda/$id'
+  id: '__root__' | '/' | '/auth' | '/reparto/$reparto' | '/scheda/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  RepartoRepartoRoute: typeof RepartoRepartoRoute
   SchedaIdRoute: typeof SchedaIdRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reparto/$reparto': {
+      id: '/reparto/$reparto'
+      path: '/reparto/$reparto'
+      fullPath: '/reparto/$reparto'
+      preLoaderRoute: typeof RepartoRepartoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/scheda/$id': {
       id: '/scheda/$id'
       path: '/scheda/$id'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  RepartoRepartoRoute: RepartoRepartoRoute,
   SchedaIdRoute: SchedaIdRoute,
 }
 export const routeTree = rootRouteImport
