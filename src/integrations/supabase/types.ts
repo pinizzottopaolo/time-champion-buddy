@@ -14,7 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      righe_scheda: {
+        Row: {
+          attiva: boolean
+          chiave: string
+          created_at: string
+          diametro: string
+          fori_qta: number | null
+          fornitore: string
+          id: string
+          mezzo_taglio: boolean
+          n_fasc: number | null
+          n_fogli: number | null
+          n_pagine: number | null
+          n_parti: number | null
+          ordine: number
+          scheda_id: string
+          tempo_assegnato: number | null
+          tempo_effettivo: number | null
+        }
+        Insert: {
+          attiva?: boolean
+          chiave: string
+          created_at?: string
+          diametro?: string
+          fori_qta?: number | null
+          fornitore?: string
+          id?: string
+          mezzo_taglio?: boolean
+          n_fasc?: number | null
+          n_fogli?: number | null
+          n_pagine?: number | null
+          n_parti?: number | null
+          ordine?: number
+          scheda_id: string
+          tempo_assegnato?: number | null
+          tempo_effettivo?: number | null
+        }
+        Update: {
+          attiva?: boolean
+          chiave?: string
+          created_at?: string
+          diametro?: string
+          fori_qta?: number | null
+          fornitore?: string
+          id?: string
+          mezzo_taglio?: boolean
+          n_fasc?: number | null
+          n_fogli?: number | null
+          n_pagine?: number | null
+          n_parti?: number | null
+          ordine?: number
+          scheda_id?: string
+          tempo_assegnato?: number | null
+          tempo_effettivo?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "righe_scheda_scheda_id_fkey"
+            columns: ["scheda_id"]
+            isOneToOne: false
+            referencedRelation: "schede"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schede: {
+        Row: {
+          cliente: string
+          created_at: string
+          data: string
+          firma: string
+          id: string
+          imballo_colli: number | null
+          lavoro: string
+          n_ord: string
+          n_ord_cliente: string
+          note: string
+          operatore: string
+          problemi: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cliente?: string
+          created_at?: string
+          data?: string
+          firma?: string
+          id?: string
+          imballo_colli?: number | null
+          lavoro?: string
+          n_ord?: string
+          n_ord_cliente?: string
+          note?: string
+          operatore?: string
+          problemi?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cliente?: string
+          created_at?: string
+          data?: string
+          firma?: string
+          id?: string
+          imballo_colli?: number | null
+          lavoro?: string
+          n_ord?: string
+          n_ord_cliente?: string
+          note?: string
+          operatore?: string
+          problemi?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
