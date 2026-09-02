@@ -82,9 +82,11 @@ export type Database = {
       schede: {
         Row: {
           cliente: string
+          completata: boolean
           created_at: string
           data: string
           firma: string
+          foto_url: string | null
           id: string
           imballo_colli: number | null
           lavoro: string
@@ -93,14 +95,17 @@ export type Database = {
           note: string
           operatore: string
           problemi: string
+          reparto: string
           updated_at: string
           user_id: string
         }
         Insert: {
           cliente?: string
+          completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          foto_url?: string | null
           id?: string
           imballo_colli?: number | null
           lavoro?: string
@@ -109,14 +114,17 @@ export type Database = {
           note?: string
           operatore?: string
           problemi?: string
+          reparto?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           cliente?: string
+          completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          foto_url?: string | null
           id?: string
           imballo_colli?: number | null
           lavoro?: string
@@ -125,6 +133,7 @@ export type Database = {
           note?: string
           operatore?: string
           problemi?: string
+          reparto?: string
           updated_at?: string
           user_id?: string
         }
