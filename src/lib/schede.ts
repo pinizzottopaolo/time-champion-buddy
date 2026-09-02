@@ -5,10 +5,14 @@ import { OPERAZIONI } from "./operazioni";
 export type Scheda = Tables<"schede">;
 export type RigaScheda = Tables<"righe_scheda">;
 
-export async function listSchede() {
-  const { data, error } = await supabase
+export type Reparto = "confezione" | "stampa";
+
+export async function listSchede(reparto?: Reparto) {
+  let q = supabase
     .from("schede")
-    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)")
+    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)");
+  if (reparto) q = q.eq("reparto", reparto);
+  const { data, error } = await q
     .order("data", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
