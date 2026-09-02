@@ -1,9 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { LogOut, Package, Printer, ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { LogOut, Package, Printer, ArrowRight, Camera, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { estraiDatiCommessa } from "@/lib/ocr.functions";
+import { creaScheda, type Reparto } from "@/lib/schede";
 
 export const Route = createFileRoute("/")({
   head: () => ({
