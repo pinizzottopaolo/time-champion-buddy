@@ -281,17 +281,6 @@ function SchedaPage() {
                           1/2 Taglio
                         </label>
                       )}
-                      <Campo label="Tempo ass. (min)">
-                        <Input
-                          inputMode="numeric"
-                          value={riga.tempo_assegnato ?? ""}
-                          onChange={(e) =>
-                            aggiornaRiga(op.chiave, {
-                              tempo_assegnato: numOrNull(e.target.value),
-                            })
-                          }
-                        />
-                      </Campo>
                       <Campo label="Tempo effet. (min)">
                         <Input
                           inputMode="numeric"
