@@ -1,0 +1,4 @@
+ALTER TABLE public.schede
+  ADD COLUMN IF NOT EXISTS tipo_carta text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS formato text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS quantita integer;
