@@ -165,9 +165,9 @@ function RepartoPage() {
             ))}
           </Sezione>
 
-          <Sezione titolo="Finiti" tono="verde" conteggio={finiti.length}>
+          <Sezione titolo="Terminati" tono="verde" conteggio={finiti.length}>
             {finiti.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nessun lavoro completato.</p>
+              <p className="text-sm text-muted-foreground">Nessun lavoro terminato.</p>
             )}
             {finiti.map((s) => (
               <CardLavoro
