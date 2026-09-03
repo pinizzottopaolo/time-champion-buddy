@@ -304,6 +304,15 @@ function SchedaPage() {
       {/* Chiusura */}
       <section className="sheet mt-6 rounded-md p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Campo label="Tempo assegnato totale (min)">
+            <Input
+              inputMode="numeric"
+              value={testata.tempo_assegnato ?? ""}
+              onChange={(e) =>
+                setTestata({ ...testata, tempo_assegnato: numOrNull(e.target.value) })
+              }
+            />
+          </Campo>
           <Campo label="Imballo — n. colli">
             <Input
               inputMode="numeric"
