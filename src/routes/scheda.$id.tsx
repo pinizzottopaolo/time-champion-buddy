@@ -85,7 +85,7 @@ function SchedaPage() {
   }, [data]);
 
   const totEff = useMemo(() => totaleEffettivo(righe), [righe]);
-  const totAss = useMemo(() => totaleAssegnato(righe), [righe]);
+  const totAss = testata.tempo_assegnato ?? 0;
 
   function aggiornaRiga(chiave: string, patch: Partial<RigaScheda>) {
     setRighe((prev) => prev.map((r) => (r.chiave === chiave ? { ...r, ...patch } : r)));
