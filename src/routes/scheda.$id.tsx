@@ -8,7 +8,6 @@ import {
   eliminaScheda,
   getScheda,
   salvaScheda,
-  totaleAssegnato,
   totaleEffettivo,
   type RigaScheda,
   type Scheda,
@@ -85,7 +84,7 @@ function SchedaPage() {
   }, [data]);
 
   const totEff = useMemo(() => totaleEffettivo(righe), [righe]);
-  const totAss = useMemo(() => totaleAssegnato(righe), [righe]);
+  const totAss = testata.tempo_assegnato ?? 0;
 
   function aggiornaRiga(chiave: string, patch: Partial<RigaScheda>) {
     setRighe((prev) => prev.map((r) => (r.chiave === chiave ? { ...r, ...patch } : r)));
@@ -281,17 +280,6 @@ function SchedaPage() {
                           1/2 Taglio
                         </label>
                       )}
-                      <Campo label="Tempo ass. (min)">
-                        <Input
-                          inputMode="numeric"
-                          value={riga.tempo_assegnato ?? ""}
-                          onChange={(e) =>
-                            aggiornaRiga(op.chiave, {
-                              tempo_assegnato: numOrNull(e.target.value),
-                            })
-                          }
-                        />
-                      </Campo>
                       <Campo label="Tempo effet. (min)">
                         <Input
                           inputMode="numeric"
@@ -315,6 +303,15 @@ function SchedaPage() {
       {/* Chiusura */}
       <section className="sheet mt-6 rounded-md p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Campo label="Tempo assegnato totale (min)">
+            <Input
+              inputMode="numeric"
+              value={testata.tempo_assegnato ?? ""}
+              onChange={(e) =>
+                setTestata({ ...testata, tempo_assegnato: numOrNull(e.target.value) })
+              }
+            />
+          </Campo>
           <Campo label="Imballo — n. colli">
             <Input
               inputMode="numeric"

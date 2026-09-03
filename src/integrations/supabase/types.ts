@@ -98,6 +98,7 @@ export type Database = {
           problemi: string
           quantita: number | null
           reparto: string
+          tempo_assegnato: number | null
           tipo_carta: string
           updated_at: string
           user_id: string
@@ -120,6 +121,7 @@ export type Database = {
           problemi?: string
           quantita?: number | null
           reparto?: string
+          tempo_assegnato?: number | null
           tipo_carta?: string
           updated_at?: string
           user_id: string
@@ -142,6 +144,7 @@ export type Database = {
           problemi?: string
           quantita?: number | null
           reparto?: string
+          tempo_assegnato?: number | null
           tipo_carta?: string
           updated_at?: string
           user_id?: string

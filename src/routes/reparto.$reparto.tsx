@@ -7,9 +7,9 @@ import { ArrowLeft, Camera, CheckCircle2, Circle, Loader2, Plus } from "lucide-r
 import { useAuth } from "@/hooks/useAuth";
 import {
   creaScheda,
+  eliminaScheda,
   listSchede,
   setCompletata,
-  totaleAssegnato,
   totaleEffettivo,
   type Reparto,
 } from "@/lib/schede";
