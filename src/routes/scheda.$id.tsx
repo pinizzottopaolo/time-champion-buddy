@@ -8,7 +8,6 @@ import {
   eliminaScheda,
   getScheda,
   salvaScheda,
-  totaleAssegnato,
   totaleEffettivo,
   type RigaScheda,
   type Scheda,
