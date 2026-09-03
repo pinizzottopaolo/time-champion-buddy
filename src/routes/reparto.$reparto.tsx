@@ -240,10 +240,14 @@ function CardLavoro({
       </button>
 
       <Link to="/scheda/$id" params={{ id: s.id }} className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
           <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
         </div>
+        <span className={verde ? "badge-terminato mt-2" : "badge-lavorazione mt-2"}>
+          {verde ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
+          {verde ? "Terminato" : "In lavorazione"}
+        </span>
         <p className="mt-1 text-sm text-muted-foreground">
           {s.lavoro || "Lavorazione senza descrizione"}
           {s.n_ord ? ` · Ord. ${s.n_ord}` : ""}
