@@ -86,6 +86,7 @@ export type Database = {
           created_at: string
           data: string
           firma: string
+          formato: string
           foto_url: string | null
           id: string
           imballo_colli: number | null
@@ -95,7 +96,9 @@ export type Database = {
           note: string
           operatore: string
           problemi: string
+          quantita: number | null
           reparto: string
+          tipo_carta: string
           updated_at: string
           user_id: string
         }
@@ -105,6 +108,7 @@ export type Database = {
           created_at?: string
           data?: string
           firma?: string
+          formato?: string
           foto_url?: string | null
           id?: string
           imballo_colli?: number | null
@@ -114,7 +118,9 @@ export type Database = {
           note?: string
           operatore?: string
           problemi?: string
+          quantita?: number | null
           reparto?: string
+          tipo_carta?: string
           updated_at?: string
           user_id: string
         }
@@ -124,6 +130,7 @@ export type Database = {
           created_at?: string
           data?: string
           firma?: string
+          formato?: string
           foto_url?: string | null
           id?: string
           imballo_colli?: number | null
@@ -133,7 +140,9 @@ export type Database = {
           note?: string
           operatore?: string
           problemi?: string
+          quantita?: number | null
           reparto?: string
+          tipo_carta?: string
           updated_at?: string
           user_id?: string
         }
