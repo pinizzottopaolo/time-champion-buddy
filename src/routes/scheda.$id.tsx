@@ -123,19 +123,13 @@ function SchedaPage() {
       <h1 className="mt-3 text-2xl font-semibold sm:text-3xl">Scheda lav. confezione</h1>
 
       {/* Testata */}
-      <section className="sheet mt-5 rounded-md p-4">
+      <section className="paper-panel mt-5 rounded-xl p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Campo label="Data">
             <Input
               type="date"
               value={testata.data ?? ""}
               onChange={(e) => setTestata({ ...testata, data: e.target.value })}
-            />
-          </Campo>
-          <Campo label="Operatore">
-            <Input
-              value={testata.operatore ?? ""}
-              onChange={(e) => setTestata({ ...testata, operatore: e.target.value })}
             />
           </Campo>
           <Campo label="Cliente">
@@ -156,10 +150,23 @@ function SchedaPage() {
               onChange={(e) => setTestata({ ...testata, n_ord: e.target.value })}
             />
           </Campo>
-          <Campo label="N. ordine cliente">
+          <Campo label="Tipo carta">
             <Input
-              value={testata.n_ord_cliente ?? ""}
-              onChange={(e) => setTestata({ ...testata, n_ord_cliente: e.target.value })}
+              value={testata.tipo_carta ?? ""}
+              onChange={(e) => setTestata({ ...testata, tipo_carta: e.target.value })}
+            />
+          </Campo>
+          <Campo label="Formato">
+            <Input
+              value={testata.formato ?? ""}
+              onChange={(e) => setTestata({ ...testata, formato: e.target.value })}
+            />
+          </Campo>
+          <Campo label="Quantità">
+            <Input
+              inputMode="numeric"
+              value={testata.quantita ?? ""}
+              onChange={(e) => setTestata({ ...testata, quantita: numOrNull(e.target.value) })}
             />
           </Campo>
         </div>
