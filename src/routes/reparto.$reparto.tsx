@@ -151,9 +151,9 @@ function RepartoPage() {
 
       {!isLoading && (
         <>
-          <Sezione titolo="Da fare" tono="rosso" conteggio={daFare.length}>
+          <Sezione titolo="In lavorazione" tono="rosso" conteggio={daFare.length}>
             {daFare.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nessun lavoro in sospeso.</p>
+              <p className="text-sm text-muted-foreground">Nessun lavoro in lavorazione.</p>
             )}
             {daFare.map((s) => (
               <CardLavoro
