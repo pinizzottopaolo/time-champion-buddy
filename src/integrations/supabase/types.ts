@@ -81,6 +81,7 @@ export type Database = {
       }
       schede: {
         Row: {
+          archiviata: boolean
           cliente: string
           completata: boolean
           created_at: string
@@ -104,6 +105,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archiviata?: boolean
           cliente?: string
           completata?: boolean
           created_at?: string
@@ -127,6 +129,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          archiviata?: boolean
           cliente?: string
           completata?: boolean
           created_at?: string
