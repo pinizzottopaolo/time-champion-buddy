@@ -249,20 +249,39 @@ function CardLavoro({
   s,
   tono,
   onToggle,
+  onArchivia,
+  onElimina,
 }: {
   s: CardScheda;
   tono: "verde" | "rosso";
   onToggle: () => void;
+  onArchivia?: () => void;
+  onElimina: () => void;
 }) {
   const eff = totaleEffettivo(s.righe_scheda ?? []);
-  const ass = totaleAssegnato(s.righe_scheda ?? []);
+  const ass = s.tempo_assegnato ?? 0;
   const verde = tono === "verde";
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function inizioPressione() {
+    timer.current = setTimeout(() => {
+      if (window.confirm("Eliminare definitivamente questo lavoro?")) onElimina();
+    }, 700);
+  }
+  function finePressione() {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  }
 
   return (
     <div
       className={`sheet flex items-start gap-3 rounded-md border-l-4 p-4 ${
         verde ? "border-l-emerald-600 bg-emerald-500/5" : "border-l-red-600 bg-red-500/5"
       }`}
+      onPointerDown={inizioPressione}
+      onPointerUp={finePressione}
+      onPointerLeave={finePressione}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <button
         type="button"
@@ -273,29 +292,38 @@ function CardLavoro({
         {verde ? <CheckCircle2 className="size-6" /> : <Circle className="size-6" />}
       </button>
 
-      <Link to="/scheda/$id" params={{ id: s.id }} className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
-          <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
-        </div>
-        <span className={verde ? "badge-terminato mt-2" : "badge-lavorazione mt-2"}>
-          {verde ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
-          {verde ? "Terminato" : "In lavorazione"}
-        </span>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {s.lavoro || "Lavorazione senza descrizione"}
-          {s.n_ord ? ` · Ord. ${s.n_ord}` : ""}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-x-6 text-sm">
-          <span>
-            <span className="label-stamp">Effettivo</span>{" "}
-            <strong className="font-display">{formatMinuti(eff)}</strong>
+      <div className="min-w-0 flex-1">
+        <Link to="/scheda/$id" params={{ id: s.id }} className="block">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
+            <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
+          </div>
+          <span className={verde ? "badge-terminato mt-2" : "badge-lavorazione mt-2"}>
+            {verde ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
+            {verde ? "Terminato" : "In lavorazione"}
           </span>
-          <span className="text-muted-foreground">
-            <span className="label-stamp">Assegnato</span> {formatMinuti(ass)}
-          </span>
-        </div>
-      </Link>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {s.lavoro || "Lavorazione senza descrizione"}
+            {s.n_ord ? ` · Ord. ${s.n_ord}` : ""}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-x-6 text-sm">
+            <span>
+              <span className="label-stamp">Effettivo</span>{" "}
+              <strong className="font-display">{formatMinuti(eff)}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              <span className="label-stamp">Assegnato</span> {formatMinuti(ass)}
+            </span>
+          </div>
+        </Link>
+
+        {onArchivia && (
+          <Button variant="outline" size="sm" className="mt-3" onClick={onArchivia}>
+            <Archive className="size-4" /> Archivia
+          </Button>
+        )}
+      </div>
     </div>
+
   );
 }
