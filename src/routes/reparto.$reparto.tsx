@@ -91,6 +91,25 @@ function RepartoPage() {
     onError: () => toast.error("Aggiornamento non riuscito"),
   });
 
+  const archivia = useMutation({
+    mutationFn: (id: string) => setArchiviata(id, true),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      qc.invalidateQueries({ queryKey: ["archivio"] });
+      toast.success("Lavoro archiviato");
+    },
+    onError: () => toast.error("Archiviazione non riuscita"),
+  });
+
+  const elimina = useMutation({
+    mutationFn: (id: string) => eliminaScheda(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      toast.success("Lavoro eliminato");
+    },
+    onError: () => toast.error("Eliminazione non riuscita"),
+  });
+
   async function onFoto(file: File) {
     setLeggendo(true);
     try {
@@ -102,7 +121,7 @@ function RepartoPage() {
       });
       const dati = await leggiFoto({ data: { imageDataUrl: dataUrl } });
       toast.success("Dati letti dalla foto");
-      nuova.mutate({
+      const id = await creaSchedaEntrambiReparti({
         cliente: dati.cliente,
         lavoro: dati.lavoro,
         n_ord: dati.n_ord,
@@ -110,6 +129,9 @@ function RepartoPage() {
         operatore: dati.operatore,
         note: dati.note,
       });
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      navigate({ to: "/scheda/$id", params: { id } });
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lettura della foto non riuscita");
     } finally {
