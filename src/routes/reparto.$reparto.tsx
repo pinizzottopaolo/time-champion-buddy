@@ -3,12 +3,23 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ArrowLeft, Camera, CheckCircle2, Circle, Loader2, Plus } from "lucide-react";
+import {
+  Archive,
+  ArrowLeft,
+  Camera,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  Plus,
+  Search,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
+  creaSchedaEntrambiReparti,
   creaScheda,
   eliminaScheda,
   listSchede,
+  setArchiviata,
   setCompletata,
   totaleEffettivo,
   type Reparto,
@@ -17,6 +28,7 @@ import { estraiDatiCommessa } from "@/lib/ocr.functions";
 import { formatMinuti } from "@/lib/operazioni";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
 
 export const Route = createFileRoute("/reparto/$reparto")({
   head: () => ({
