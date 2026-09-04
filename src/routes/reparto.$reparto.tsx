@@ -163,6 +163,9 @@ function RepartoPage() {
           {leggendo ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
           {leggendo ? "Lettura in corso…" : "Foto commessa"}
         </Button>
+        <Button variant="ghost" onClick={() => navigate({ to: "/archivio" })}>
+          <Search className="size-4" /> Archivio
+        </Button>
         <input
           ref={fileRef}
           type="file"
@@ -175,6 +178,10 @@ function RepartoPage() {
           }}
         />
       </div>
+
+      <p className="mt-3 text-xs text-muted-foreground">
+        Tieni premuto su un lavoro per eliminarlo.
+      </p>
 
       {isLoading && (
         <div className="mt-6 space-y-3">
@@ -195,6 +202,7 @@ function RepartoPage() {
                 s={s}
                 tono="rosso"
                 onToggle={() => toggle.mutate({ id: s.id, done: true })}
+                onElimina={() => elimina.mutate(s.id)}
               />
             ))}
           </Sezione>
@@ -209,6 +217,8 @@ function RepartoPage() {
                 s={s}
                 tono="verde"
                 onToggle={() => toggle.mutate({ id: s.id, done: false })}
+                onArchivia={() => archivia.mutate(s.id)}
+                onElimina={() => elimina.mutate(s.id)}
               />
             ))}
           </Sezione>
@@ -217,6 +227,7 @@ function RepartoPage() {
     </main>
   );
 }
+
 
 function Sezione({
   titolo,
