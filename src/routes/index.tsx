@@ -3,12 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { LogOut, Package, Printer, ArrowRight, Camera, Loader2 } from "lucide-react";
+import { LogOut, Package, Printer, ArrowRight, Camera, Loader2, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { estraiDatiCommessa } from "@/lib/ocr.functions";
-import { creaScheda, type Reparto } from "@/lib/schede";
+import { creaSchedaEntrambiReparti } from "@/lib/schede";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,7 +37,6 @@ function Index() {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [leggendo, setLeggendo] = useState(false);
-  const [repartoFoto, setRepartoFoto] = useState<Reparto>("confezione");
   const leggiFoto = useServerFn(estraiDatiCommessa);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ function Index() {
         fr.readAsDataURL(file);
       });
       const dati = await leggiFoto({ data: { imageDataUrl: dataUrl } });
-      const id = await creaScheda(repartoFoto, {
+      const id = await creaSchedaEntrambiReparti({
         cliente: dati.cliente,
         lavoro: dati.lavoro,
         n_ord: dati.n_ord,
@@ -63,7 +62,7 @@ function Index() {
         note: dati.note,
       });
       qc.invalidateQueries({ queryKey: ["schede"] });
-      toast.success("Scheda creata dalla foto");
+      toast.success("Scheda creata in Confezione e Stampa");
       navigate({ to: "/scheda/$id", params: { id } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lettura della foto non riuscita");
@@ -80,6 +79,10 @@ function Index() {
           <p className="label-stamp">Tipografia — gestione tempi</p>
           <h1 className="mt-1 text-3xl font-semibold sm:text-4xl">Reparti</h1>
         </div>
+        <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => navigate({ to: "/archivio" })}>
+          <Search className="size-4" /> Archivio
+        </Button>
         <Button
           variant="ghost"
           size="sm"
@@ -90,6 +93,7 @@ function Index() {
         >
           <LogOut className="size-4" /> Esci
         </Button>
+        </div>
       </header>
 
       <p className="mt-3 max-w-lg text-sm text-muted-foreground">
@@ -103,10 +107,7 @@ function Index() {
           variante="confezione"
           icona={<Package className="size-8 sm:size-10" />}
           onApri={() => navigate({ to: "/reparto/$reparto", params: { reparto: "confezione" } })}
-          onFoto={() => {
-            setRepartoFoto("confezione");
-            fileRef.current?.click();
-          }}
+          onFoto={() => fileRef.current?.click()}
           occupato={leggendo}
         />
         <RepartoCard
@@ -115,10 +116,7 @@ function Index() {
           variante="stampa"
           icona={<Printer className="size-8 sm:size-10" />}
           onApri={() => navigate({ to: "/reparto/$reparto", params: { reparto: "stampa" } })}
-          onFoto={() => {
-            setRepartoFoto("stampa");
-            fileRef.current?.click();
-          }}
+          onFoto={() => fileRef.current?.click()}
           occupato={leggendo}
         />
       </div>

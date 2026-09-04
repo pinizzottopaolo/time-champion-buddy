@@ -3,12 +3,23 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ArrowLeft, Camera, CheckCircle2, Circle, Loader2, Plus } from "lucide-react";
+import {
+  Archive,
+  ArrowLeft,
+  Camera,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  Plus,
+  Search,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
+  creaSchedaEntrambiReparti,
   creaScheda,
   eliminaScheda,
   listSchede,
+  setArchiviata,
   setCompletata,
   totaleEffettivo,
   type Reparto,
@@ -17,6 +28,7 @@ import { estraiDatiCommessa } from "@/lib/ocr.functions";
 import { formatMinuti } from "@/lib/operazioni";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
 
 export const Route = createFileRoute("/reparto/$reparto")({
   head: () => ({
@@ -79,6 +91,25 @@ function RepartoPage() {
     onError: () => toast.error("Aggiornamento non riuscito"),
   });
 
+  const archivia = useMutation({
+    mutationFn: (id: string) => setArchiviata(id, true),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      qc.invalidateQueries({ queryKey: ["archivio"] });
+      toast.success("Lavoro archiviato");
+    },
+    onError: () => toast.error("Archiviazione non riuscita"),
+  });
+
+  const elimina = useMutation({
+    mutationFn: (id: string) => eliminaScheda(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      toast.success("Lavoro eliminato");
+    },
+    onError: () => toast.error("Eliminazione non riuscita"),
+  });
+
   async function onFoto(file: File) {
     setLeggendo(true);
     try {
@@ -90,7 +121,7 @@ function RepartoPage() {
       });
       const dati = await leggiFoto({ data: { imageDataUrl: dataUrl } });
       toast.success("Dati letti dalla foto");
-      nuova.mutate({
+      const id = await creaSchedaEntrambiReparti({
         cliente: dati.cliente,
         lavoro: dati.lavoro,
         n_ord: dati.n_ord,
@@ -98,6 +129,9 @@ function RepartoPage() {
         operatore: dati.operatore,
         note: dati.note,
       });
+      qc.invalidateQueries({ queryKey: ["schede"] });
+      navigate({ to: "/scheda/$id", params: { id } });
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lettura della foto non riuscita");
     } finally {
@@ -129,6 +163,9 @@ function RepartoPage() {
           {leggendo ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
           {leggendo ? "Lettura in corso…" : "Foto commessa"}
         </Button>
+        <Button variant="ghost" onClick={() => navigate({ to: "/archivio" })}>
+          <Search className="size-4" /> Archivio
+        </Button>
         <input
           ref={fileRef}
           type="file"
@@ -141,6 +178,10 @@ function RepartoPage() {
           }}
         />
       </div>
+
+      <p className="mt-3 text-xs text-muted-foreground">
+        Tieni premuto su un lavoro per eliminarlo.
+      </p>
 
       {isLoading && (
         <div className="mt-6 space-y-3">
@@ -161,6 +202,7 @@ function RepartoPage() {
                 s={s}
                 tono="rosso"
                 onToggle={() => toggle.mutate({ id: s.id, done: true })}
+                onElimina={() => elimina.mutate(s.id)}
               />
             ))}
           </Sezione>
@@ -175,6 +217,8 @@ function RepartoPage() {
                 s={s}
                 tono="verde"
                 onToggle={() => toggle.mutate({ id: s.id, done: false })}
+                onArchivia={() => archivia.mutate(s.id)}
+                onElimina={() => elimina.mutate(s.id)}
               />
             ))}
           </Sezione>
@@ -183,6 +227,7 @@ function RepartoPage() {
     </main>
   );
 }
+
 
 function Sezione({
   titolo,
@@ -215,20 +260,39 @@ function CardLavoro({
   s,
   tono,
   onToggle,
+  onArchivia,
+  onElimina,
 }: {
   s: CardScheda;
   tono: "verde" | "rosso";
   onToggle: () => void;
+  onArchivia?: () => void;
+  onElimina: () => void;
 }) {
   const eff = totaleEffettivo(s.righe_scheda ?? []);
-  const ass = totaleAssegnato(s.righe_scheda ?? []);
+  const ass = s.tempo_assegnato ?? 0;
   const verde = tono === "verde";
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function inizioPressione() {
+    timer.current = setTimeout(() => {
+      if (window.confirm("Eliminare definitivamente questo lavoro?")) onElimina();
+    }, 700);
+  }
+  function finePressione() {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  }
 
   return (
     <div
       className={`sheet flex items-start gap-3 rounded-md border-l-4 p-4 ${
         verde ? "border-l-emerald-600 bg-emerald-500/5" : "border-l-red-600 bg-red-500/5"
       }`}
+      onPointerDown={inizioPressione}
+      onPointerUp={finePressione}
+      onPointerLeave={finePressione}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <button
         type="button"
@@ -239,29 +303,38 @@ function CardLavoro({
         {verde ? <CheckCircle2 className="size-6" /> : <Circle className="size-6" />}
       </button>
 
-      <Link to="/scheda/$id" params={{ id: s.id }} className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
-          <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
-        </div>
-        <span className={verde ? "badge-terminato mt-2" : "badge-lavorazione mt-2"}>
-          {verde ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
-          {verde ? "Terminato" : "In lavorazione"}
-        </span>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {s.lavoro || "Lavorazione senza descrizione"}
-          {s.n_ord ? ` · Ord. ${s.n_ord}` : ""}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-x-6 text-sm">
-          <span>
-            <span className="label-stamp">Effettivo</span>{" "}
-            <strong className="font-display">{formatMinuti(eff)}</strong>
+      <div className="min-w-0 flex-1">
+        <Link to="/scheda/$id" params={{ id: s.id }} className="block">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
+            <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
+          </div>
+          <span className={verde ? "badge-terminato mt-2" : "badge-lavorazione mt-2"}>
+            {verde ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
+            {verde ? "Terminato" : "In lavorazione"}
           </span>
-          <span className="text-muted-foreground">
-            <span className="label-stamp">Assegnato</span> {formatMinuti(ass)}
-          </span>
-        </div>
-      </Link>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {s.lavoro || "Lavorazione senza descrizione"}
+            {s.n_ord ? ` · Ord. ${s.n_ord}` : ""}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-x-6 text-sm">
+            <span>
+              <span className="label-stamp">Effettivo</span>{" "}
+              <strong className="font-display">{formatMinuti(eff)}</strong>
+            </span>
+            <span className="text-muted-foreground">
+              <span className="label-stamp">Assegnato</span> {formatMinuti(ass)}
+            </span>
+          </div>
+        </Link>
+
+        {onArchivia && (
+          <Button variant="outline" size="sm" className="mt-3" onClick={onArchivia}>
+            <Archive className="size-4" /> Archivia
+          </Button>
+        )}
+      </div>
     </div>
+
   );
 }
