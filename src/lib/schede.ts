@@ -7,10 +7,11 @@ export type RigaScheda = Tables<"righe_scheda">;
 
 export type Reparto = "confezione" | "stampa";
 
-export async function listSchede(reparto?: Reparto) {
+export async function listSchede(reparto?: Reparto, archiviate = false) {
   let q = supabase
     .from("schede")
-    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)");
+    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)")
+    .eq("archiviata", archiviate);
   if (reparto) q = q.eq("reparto", reparto);
   const { data, error } = await q
     .order("data", { ascending: false })
@@ -20,6 +21,24 @@ export async function listSchede(reparto?: Reparto) {
     righe_scheda: Pick<RigaScheda, "tempo_assegnato" | "tempo_effettivo" | "attiva">[];
   })[];
 }
+
+export async function listArchivio() {
+  const { data, error } = await supabase
+    .from("schede")
+    .select("*, righe_scheda(tempo_assegnato, tempo_effettivo, attiva)")
+    .eq("archiviata", true)
+    .order("data", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as (Scheda & {
+    righe_scheda: Pick<RigaScheda, "tempo_assegnato" | "tempo_effettivo" | "attiva">[];
+  })[];
+}
+
+export async function setArchiviata(id: string, archiviata: boolean) {
+  const { error } = await supabase.from("schede").update({ archiviata }).eq("id", id);
+  if (error) throw error;
+}
+
 
 export async function getScheda(id: string) {
   const { data, error } = await supabase.from("schede").select("*").eq("id", id).maybeSingle();
