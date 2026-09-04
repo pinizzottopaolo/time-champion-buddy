@@ -81,6 +81,14 @@ export async function creaScheda(
   return data.id as string;
 }
 
+/** Crea la stessa commessa sia in confezione sia in stampa. Ritorna l'id di confezione. */
+export async function creaSchedaEntrambiReparti(dati: Partial<Scheda> = {}) {
+  const idConfezione = await creaScheda("confezione", dati);
+  await creaScheda("stampa", dati);
+  return idConfezione;
+}
+
+
 export async function salvaScheda(
   id: string,
   testata: Partial<Scheda>,
