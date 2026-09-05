@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   eliminaScheda,
   getScheda,
+  listClienti,
   salvaScheda,
   totaleEffettivo,
   type RigaScheda,
@@ -72,6 +73,12 @@ function SchedaPage() {
     enabled: !!session,
   });
 
+  const { data: clienti } = useQuery({
+    queryKey: ["clienti"],
+    queryFn: listClienti,
+    enabled: !!session,
+  });
+
   const [testata, setTestata] = useState<Partial<Scheda>>({});
   const [righe, setRighe] = useState<RigaScheda[]>([]);
   const [saving, setSaving] = useState(false);
@@ -133,9 +140,16 @@ function SchedaPage() {
           </Campo>
           <Campo label="Cliente">
             <Input
+              list="elenco-clienti"
+              placeholder="Scegli o scrivi un cliente"
               value={testata.cliente ?? ""}
               onChange={(e) => setTestata({ ...testata, cliente: e.target.value })}
             />
+            <datalist id="elenco-clienti">
+              {(clienti ?? []).map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </Campo>
           <Campo label="Lavoro">
             <Input
