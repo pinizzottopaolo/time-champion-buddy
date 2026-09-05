@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   eliminaScheda,
   getScheda,
+  listClienti,
   salvaScheda,
   totaleEffettivo,
   type RigaScheda,
