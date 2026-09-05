@@ -248,8 +248,8 @@ function Colonna({
     <section
       className={`rounded-xl border p-4 ${
         verde
-          ? "border-emerald-600/30 bg-emerald-500/10"
-          : "border-red-600/30 bg-red-500/10"
+          ? "border-emerald-600/60 bg-emerald-500/25"
+          : "border-red-600/60 bg-red-500/25"
       }`}
     >
       <h2 className="flex items-center gap-2">
@@ -301,7 +301,9 @@ function CardLavoro({
   return (
     <div
       className={`sheet flex items-start gap-3 rounded-md border-l-4 p-4 ${
-        verde ? "border-l-emerald-600 bg-emerald-500/5" : "border-l-red-600 bg-red-500/5"
+        verde
+          ? "border-l-emerald-600 border-emerald-600/40 bg-emerald-500/20"
+          : "border-l-red-600 border-red-600/40 bg-red-500/20"
       }`}
       onPointerDown={inizioPressione}
       onPointerUp={finePressione}
