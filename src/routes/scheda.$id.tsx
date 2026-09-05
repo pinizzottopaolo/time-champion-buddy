@@ -132,7 +132,9 @@ function SchedaPage() {
         <ArrowLeft className="size-3.5" /> Tutte le schede
       </Link>
 
-      <h1 className="mt-3 text-2xl font-semibold sm:text-3xl">Scheda lav. confezione</h1>
+      <h1 className="mt-3 text-2xl font-semibold sm:text-3xl">
+        Scheda lav. {isStampa ? "stampa" : "confezione"}
+      </h1>
 
       {/* Testata */}
       <section className="paper-panel mt-5 rounded-xl p-4 sm:p-5">
