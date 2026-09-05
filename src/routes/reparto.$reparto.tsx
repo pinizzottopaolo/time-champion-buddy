@@ -229,7 +229,7 @@ function RepartoPage() {
 }
 
 
-function Sezione({
+function Colonna({
   titolo,
   tono,
   conteggio,
@@ -240,12 +240,24 @@ function Sezione({
   conteggio: number;
   children: React.ReactNode;
 }) {
+  const verde = tono === "verde";
+  const Icona = verde ? PackageCheck : Hammer;
   return (
-    <section className="mt-8">
+    <section
+      className={`rounded-xl border p-4 ${
+        verde
+          ? "border-emerald-600/30 bg-emerald-500/10"
+          : "border-red-600/30 bg-red-500/10"
+      }`}
+    >
       <h2 className="flex items-center gap-2">
         <span
-          className={`size-2.5 rounded-full ${tono === "verde" ? "bg-emerald-600" : "bg-red-600"}`}
-        />
+          className={`grid size-8 place-items-center rounded-lg ${
+            verde ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+          }`}
+        >
+          <Icona className="size-4" />
+        </span>
         <span className="label-stamp">{titolo}</span>
         <span className="text-xs text-muted-foreground">({conteggio})</span>
       </h2>
