@@ -88,7 +88,9 @@ export type Database = {
           data: string
           firma: string
           formato: string
+          formato_finito: string
           foto_url: string | null
+          gruppo_id: string | null
           id: string
           imballo_colli: number | null
           lavoro: string
@@ -112,7 +114,9 @@ export type Database = {
           data?: string
           firma?: string
           formato?: string
+          formato_finito?: string
           foto_url?: string | null
+          gruppo_id?: string | null
           id?: string
           imballo_colli?: number | null
           lavoro?: string
@@ -136,7 +140,9 @@ export type Database = {
           data?: string
           firma?: string
           formato?: string
+          formato_finito?: string
           foto_url?: string | null
+          gruppo_id?: string | null
           id?: string
           imballo_colli?: number | null
           lavoro?: string
