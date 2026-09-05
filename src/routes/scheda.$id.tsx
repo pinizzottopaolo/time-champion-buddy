@@ -51,6 +51,8 @@ export const Route = createFileRoute("/scheda/$id")({
   component: SchedaPage,
 });
 
+const TIPI_STAMPA = ["Fronte", "Fronte retro", "Bianca e volta", "Pinza con pinza"] as const;
+
 function numOrNull(v: string): number | null {
   if (v.trim() === "") return null;
   const n = Number(v);
