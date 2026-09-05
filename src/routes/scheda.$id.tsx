@@ -92,6 +92,10 @@ function SchedaPage() {
 
   const totEff = useMemo(() => totaleEffettivo(righe), [righe]);
   const totAss = testata.tempo_assegnato ?? 0;
+  const isStampa = testata.reparto === "stampa";
+  const colore = testata.colore ?? "";
+  const coloreSel =
+    colore === "CMYK" || colore === "Pantone" ? colore : colore === "" ? "" : "Altro";
 
   function aggiornaRiga(chiave: string, patch: Partial<RigaScheda>) {
     setRighe((prev) => prev.map((r) => (r.chiave === chiave ? { ...r, ...patch } : r)));
