@@ -191,8 +191,8 @@ function RepartoPage() {
       )}
 
       {!isLoading && (
-        <>
-          <Sezione titolo="In lavorazione" tono="rosso" conteggio={daFare.length}>
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <Colonna titolo="Da fare" tono="rosso" conteggio={daFare.length}>
             {daFare.length === 0 && (
               <p className="text-sm text-muted-foreground">Nessun lavoro in lavorazione.</p>
             )}
@@ -205,9 +205,9 @@ function RepartoPage() {
                 onElimina={() => elimina.mutate(s.id)}
               />
             ))}
-          </Sezione>
+          </Colonna>
 
-          <Sezione titolo="Terminati" tono="verde" conteggio={finiti.length}>
+          <Colonna titolo="Terminati" tono="verde" conteggio={finiti.length}>
             {finiti.length === 0 && (
               <p className="text-sm text-muted-foreground">Nessun lavoro terminato.</p>
             )}
@@ -221,8 +221,8 @@ function RepartoPage() {
                 onElimina={() => elimina.mutate(s.id)}
               />
             ))}
-          </Sezione>
-        </>
+          </Colonna>
+        </div>
       )}
     </main>
   );
