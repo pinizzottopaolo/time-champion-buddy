@@ -78,9 +78,14 @@ export async function creaScheda(
   const { data, error } = await supabase
     .from("schede")
     .insert({ user_id: uid, reparto, ...dati } as TablesInsert<"schede">)
-    .select("id")
+    .select("id, gruppo_id")
     .single();
   if (error) throw error;
+
+  if (!data.gruppo_id) {
+    await supabase.from("schede").update({ gruppo_id: data.id }).eq("id", data.id);
+  }
+
 
   const righe: TablesInsert<"righe_scheda">[] = OPERAZIONI.map((op, i) => ({
     scheda_id: data.id,
