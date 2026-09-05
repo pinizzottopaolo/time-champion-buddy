@@ -78,9 +78,14 @@ export async function creaScheda(
   const { data, error } = await supabase
     .from("schede")
     .insert({ user_id: uid, reparto, ...dati } as TablesInsert<"schede">)
-    .select("id")
+    .select("id, gruppo_id")
     .single();
   if (error) throw error;
+
+  if (!data.gruppo_id) {
+    await supabase.from("schede").update({ gruppo_id: data.id }).eq("id", data.id);
+  }
+
 
   const righe: TablesInsert<"righe_scheda">[] = OPERAZIONI.map((op, i) => ({
     scheda_id: data.id,
@@ -95,11 +100,24 @@ export async function creaScheda(
 
 /** Crea la stessa commessa sia in confezione sia in stampa. Ritorna l'id di confezione. */
 export async function creaSchedaEntrambiReparti(dati: Partial<Scheda> = {}) {
-  const idConfezione = await creaScheda("confezione", dati);
-  await creaScheda("stampa", dati);
+  const gruppo_id = crypto.randomUUID();
+  const idConfezione = await creaScheda("confezione", { ...dati, gruppo_id });
+  await creaScheda("stampa", { ...dati, gruppo_id });
   return idConfezione;
 }
 
+/** Dati della commessa condivisi tra confezione e stampa. */
+const CAMPI_CONDIVISI = [
+  "data",
+  "cliente",
+  "lavoro",
+  "n_ord",
+  "n_ord_cliente",
+  "tipo_carta",
+  "formato",
+  "formato_finito",
+  "quantita",
+] as const;
 
 export async function salvaScheda(
   id: string,
@@ -108,6 +126,24 @@ export async function salvaScheda(
 ) {
   const { error } = await supabase.from("schede").update(testata).eq("id", id);
   if (error) throw error;
+
+  // Riporta i dati di commessa sulla scheda gemella dell'altro reparto
+  const gruppo = testata.gruppo_id;
+  if (gruppo) {
+    const condivisi: Partial<Scheda> = {};
+    for (const k of CAMPI_CONDIVISI) {
+      if (k in testata) (condivisi as Record<string, unknown>)[k] = testata[k];
+    }
+    if (Object.keys(condivisi).length > 0) {
+      const { error: e3 } = await supabase
+        .from("schede")
+        .update(condivisi)
+        .eq("gruppo_id", gruppo)
+        .neq("id", id);
+      if (e3) throw e3;
+    }
+  }
+
 
   for (const r of righe) {
     const { id: rigaId, scheda_id: _s, created_at: _c, ...campi } = r;

@@ -175,6 +175,12 @@ function SchedaPage() {
               onChange={(e) => setTestata({ ...testata, formato: e.target.value })}
             />
           </Campo>
+          <Campo label="Formato finito">
+            <Input
+              value={testata.formato_finito ?? ""}
+              onChange={(e) => setTestata({ ...testata, formato_finito: e.target.value })}
+            />
+          </Campo>
           <Campo label="Quantità">
             <Input
               inputMode="numeric"
