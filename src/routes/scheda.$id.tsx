@@ -175,12 +175,14 @@ function SchedaPage() {
               onChange={(e) => setTestata({ ...testata, formato: e.target.value })}
             />
           </Campo>
-          <Campo label="Formato finito">
-            <Input
-              value={testata.formato_finito ?? ""}
-              onChange={(e) => setTestata({ ...testata, formato_finito: e.target.value })}
-            />
-          </Campo>
+          {!isStampa && (
+            <Campo label="Formato finito">
+              <Input
+                value={testata.formato_finito ?? ""}
+                onChange={(e) => setTestata({ ...testata, formato_finito: e.target.value })}
+              />
+            </Campo>
+          )}
           <Campo label="Quantità">
             <Input
               inputMode="numeric"
@@ -188,6 +190,67 @@ function SchedaPage() {
               onChange={(e) => setTestata({ ...testata, quantita: numOrNull(e.target.value) })}
             />
           </Campo>
+          {isStampa && (
+            <>
+              <Campo label="Fogli prelevati">
+                <Input
+                  inputMode="numeric"
+                  value={testata.fogli_prelevati ?? ""}
+                  onChange={(e) =>
+                    setTestata({ ...testata, fogli_prelevati: numOrNull(e.target.value) })
+                  }
+                />
+              </Campo>
+              <Campo label="Fogli stampati">
+                <Input
+                  inputMode="numeric"
+                  value={testata.fogli_stampati ?? ""}
+                  onChange={(e) =>
+                    setTestata({ ...testata, fogli_stampati: numOrNull(e.target.value) })
+                  }
+                />
+              </Campo>
+              <Campo label="Tipo stampa">
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={testata.tipo_stampa ?? ""}
+                  onChange={(e) => setTestata({ ...testata, tipo_stampa: e.target.value })}
+                >
+                  <option value="">—</option>
+                  {TIPI_STAMPA.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
+              <Campo label="Colore">
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={coloreSel}
+                  onChange={(e) =>
+                    setTestata({
+                      ...testata,
+                      colore: e.target.value === "Altro" ? " " : e.target.value,
+                    })
+                  }
+                >
+                  <option value="">—</option>
+                  <option value="CMYK">CMYK</option>
+                  <option value="Pantone">Pantone</option>
+                  <option value="Altro">Altro</option>
+                </select>
+                {coloreSel === "Altro" && (
+                  <Input
+                    className="mt-2"
+                    placeholder="Specifica il colore"
+                    value={(testata.colore ?? "").trim()}
+                    onChange={(e) => setTestata({ ...testata, colore: e.target.value })}
+                  />
+                )}
+              </Campo>
+            </>
+          )}
         </div>
       </section>
 
