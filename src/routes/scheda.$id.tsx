@@ -72,6 +72,12 @@ function SchedaPage() {
     enabled: !!session,
   });
 
+  const { data: clienti } = useQuery({
+    queryKey: ["clienti"],
+    queryFn: listClienti,
+    enabled: !!session,
+  });
+
   const [testata, setTestata] = useState<Partial<Scheda>>({});
   const [righe, setRighe] = useState<RigaScheda[]>([]);
   const [saving, setSaving] = useState(false);
