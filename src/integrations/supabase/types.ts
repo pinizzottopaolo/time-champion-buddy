@@ -83,10 +83,13 @@ export type Database = {
         Row: {
           archiviata: boolean
           cliente: string
+          colore: string
           completata: boolean
           created_at: string
           data: string
           firma: string
+          fogli_prelevati: number | null
+          fogli_stampati: number | null
           formato: string
           formato_finito: string
           foto_url: string | null
@@ -103,16 +106,20 @@ export type Database = {
           reparto: string
           tempo_assegnato: number | null
           tipo_carta: string
+          tipo_stampa: string
           updated_at: string
           user_id: string
         }
         Insert: {
           archiviata?: boolean
           cliente?: string
+          colore?: string
           completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          fogli_prelevati?: number | null
+          fogli_stampati?: number | null
           formato?: string
           formato_finito?: string
           foto_url?: string | null
@@ -129,16 +136,20 @@ export type Database = {
           reparto?: string
           tempo_assegnato?: number | null
           tipo_carta?: string
+          tipo_stampa?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           archiviata?: boolean
           cliente?: string
+          colore?: string
           completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          fogli_prelevati?: number | null
+          fogli_stampati?: number | null
           formato?: string
           formato_finito?: string
           foto_url?: string | null
@@ -155,6 +166,7 @@ export type Database = {
           reparto?: string
           tempo_assegnato?: number | null
           tipo_carta?: string
+          tipo_stampa?: string
           updated_at?: string
           user_id?: string
         }
