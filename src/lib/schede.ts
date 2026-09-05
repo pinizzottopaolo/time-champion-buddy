@@ -34,6 +34,18 @@ export async function listArchivio() {
   })[];
 }
 
+/** Elenco distinto dei clienti già inseriti, ordinati alfabeticamente. */
+export async function listClienti() {
+  const { data, error } = await supabase
+    .from("schede")
+    .select("cliente")
+    .neq("cliente", "")
+    .order("cliente");
+  if (error) throw error;
+  const set = new Set((data ?? []).map((r) => r.cliente).filter(Boolean));
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "it"));
+}
+
 export async function setArchiviata(id: string, archiviata: boolean) {
   const { error } = await supabase.from("schede").update({ archiviata }).eq("id", id);
   if (error) throw error;
