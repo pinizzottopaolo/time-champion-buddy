@@ -147,10 +147,23 @@ function ArchivioPage() {
           )}
           {gruppi.map((g) => {
             const capo = g[0]!;
-            const effettivo = g.reduce((t, s) => t + totaleEffettivo(s.righe_scheda ?? []), 0);
+            const effettivo = g.reduce(
+              (t, s) =>
+                t +
+                (s.reparto === "stampa"
+                  ? (s.tempo_effettivo ?? 0)
+                  : totaleEffettivo(s.righe_scheda ?? [])),
+              0,
+            );
+            const chiave = (capo.n_ord ?? "").trim() ? (capo.n_ord ?? "").trim() : `id:${capo.id}`;
             const assegnato = g.reduce((t, s) => t + (s.tempo_assegnato ?? 0), 0);
             return (
-              <div key={capo.id} className="paper-panel rounded-md p-4">
+              <Link
+                key={capo.id}
+                to="/archivio/$ord"
+                params={{ ord: chiave }}
+                className="paper-panel block rounded-md p-4 transition-colors hover:bg-muted/40"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-lg font-semibold">{capo.cliente || "Cliente da definire"}</h3>
                   <span className="label-stamp">{new Date(capo.data).toLocaleDateString("it-IT")}</span>
@@ -169,22 +182,21 @@ function ArchivioPage() {
                   </span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {g.map((s) => (
-                    <Button key={s.id} asChild size="sm" variant="outline">
-                      <Link to="/scheda/$id" params={{ id: s.id }}>
-                        <span className="capitalize">{s.reparto}</span>
-                      </Link>
-                    </Button>
-                  ))}
+                  <span className="label-stamp">
+                    {g.map((s) => s.reparto).join(" \u00b7 ")}
+                  </span>
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => g.forEach((s) => ripristina.mutate(s.id))}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      g.forEach((s) => ripristina.mutate(s.id));
+                    }}
                   >
                     <ArchiveRestore className="size-4" /> Ripristina
                   </Button>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </section>
