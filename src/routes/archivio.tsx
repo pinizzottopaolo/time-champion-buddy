@@ -146,7 +146,7 @@ function ArchivioPage() {
             <p className="text-sm text-muted-foreground">Nessun lavoro trovato.</p>
           )}
           {gruppi.map((g) => {
-            const capo = g[0];
+            const capo = g[0]!;
             const effettivo = g.reduce((t, s) => t + totaleEffettivo(s.righe_scheda ?? []), 0);
             const assegnato = g.reduce((t, s) => t + (s.tempo_assegnato ?? 0), 0);
             return (
