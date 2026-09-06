@@ -263,7 +263,7 @@ function SchedaPage() {
       </section>
 
       {/* Lavorazioni */}
-      {GRUPPI.map((g) => (
+      {!isStampa && GRUPPI.map((g) => (
         <section key={g.id} className="mt-6">
           <h2 className="label-stamp">{g.titolo}</h2>
           <div className="mt-2 space-y-2">
