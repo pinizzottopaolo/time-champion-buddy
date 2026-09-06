@@ -92,7 +92,13 @@ function SchedaPage() {
     }
   }, [data]);
 
-  const totEff = useMemo(() => totaleEffettivo(righe), [righe]);
+  const totEff = useMemo(
+    () =>
+      testata.reparto === "stampa"
+        ? (testata.tempo_effettivo ?? 0)
+        : totaleEffettivo(righe),
+    [righe, testata.reparto, testata.tempo_effettivo],
+  );
   const totAss = testata.tempo_assegnato ?? 0;
   const isStampa = testata.reparto === "stampa";
   const colore = testata.colore ?? "";
