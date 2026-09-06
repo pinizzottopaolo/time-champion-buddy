@@ -105,6 +105,7 @@ export type Database = {
           quantita: number | null
           reparto: string
           tempo_assegnato: number | null
+          tempo_effettivo: number | null
           tipo_carta: string
           tipo_stampa: string
           updated_at: string
@@ -135,6 +136,7 @@ export type Database = {
           quantita?: number | null
           reparto?: string
           tempo_assegnato?: number | null
+          tempo_effettivo?: number | null
           tipo_carta?: string
           tipo_stampa?: string
           updated_at?: string
@@ -165,6 +167,7 @@ export type Database = {
           quantita?: number | null
           reparto?: string
           tempo_assegnato?: number | null
+          tempo_effettivo?: number | null
           tipo_carta?: string
           tipo_stampa?: string
           updated_at?: string
