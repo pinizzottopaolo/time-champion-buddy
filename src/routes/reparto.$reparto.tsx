@@ -253,13 +253,7 @@ function Colonna({
       }`}
     >
       <h2 className="flex items-center gap-2">
-        <span
-          className={`grid size-8 place-items-center rounded-lg ${
-            verde ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
-          }`}
-        >
-          <Icona className="size-4" />
-        </span>
+        <Icona className={`size-5 ${verde ? "text-emerald-700" : "text-red-700"}`} />
         <span className="label-stamp">{titolo}</span>
         <span className="text-xs text-muted-foreground">({conteggio})</span>
       </h2>
@@ -283,7 +277,8 @@ function CardLavoro({
   onArchivia?: () => void;
   onElimina: () => void;
 }) {
-  const eff = totaleEffettivo(s.righe_scheda ?? []);
+  const eff =
+    s.reparto === "stampa" ? (s.tempo_effettivo ?? 0) : totaleEffettivo(s.righe_scheda ?? []);
   const ass = s.tempo_assegnato ?? 0;
   const verde = tono === "verde";
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

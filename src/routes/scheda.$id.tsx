@@ -92,7 +92,13 @@ function SchedaPage() {
     }
   }, [data]);
 
-  const totEff = useMemo(() => totaleEffettivo(righe), [righe]);
+  const totEff = useMemo(
+    () =>
+      testata.reparto === "stampa"
+        ? (testata.tempo_effettivo ?? 0)
+        : totaleEffettivo(righe),
+    [righe, testata.reparto, testata.tempo_effettivo],
+  );
   const totAss = testata.tempo_assegnato ?? 0;
   const isStampa = testata.reparto === "stampa";
   const colore = testata.colore ?? "";
@@ -403,21 +409,35 @@ function SchedaPage() {
               }
             />
           </Campo>
-          <Campo label="Imballo — n. colli">
-            <Input
-              inputMode="numeric"
-              value={testata.imballo_colli ?? ""}
-              onChange={(e) =>
-                setTestata({ ...testata, imballo_colli: numOrNull(e.target.value) })
-              }
-            />
-          </Campo>
-          <Campo label="Firma">
-            <Input
-              value={testata.firma ?? ""}
-              onChange={(e) => setTestata({ ...testata, firma: e.target.value })}
-            />
-          </Campo>
+          {isStampa ? (
+            <Campo label="Tempo effettivo totale (min)">
+              <Input
+                inputMode="numeric"
+                value={testata.tempo_effettivo ?? ""}
+                onChange={(e) =>
+                  setTestata({ ...testata, tempo_effettivo: numOrNull(e.target.value) })
+                }
+              />
+            </Campo>
+          ) : (
+            <>
+              <Campo label="Imballo — n. colli">
+                <Input
+                  inputMode="numeric"
+                  value={testata.imballo_colli ?? ""}
+                  onChange={(e) =>
+                    setTestata({ ...testata, imballo_colli: numOrNull(e.target.value) })
+                  }
+                />
+              </Campo>
+              <Campo label="Firma">
+                <Input
+                  value={testata.firma ?? ""}
+                  onChange={(e) => setTestata({ ...testata, firma: e.target.value })}
+                />
+              </Campo>
+            </>
+          )}
         </div>
         <div className="mt-4 space-y-4">
           <Campo label="Note">
