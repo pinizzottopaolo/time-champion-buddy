@@ -73,6 +73,17 @@ function ArchivioPage() {
     });
   }, [data, q, filtro]);
 
+  const gruppi = useMemo(() => {
+    const map = new Map<string, typeof risultati>();
+    for (const s of risultati) {
+      const key = (s.n_ord ?? "").trim() ? `ord:${(s.n_ord ?? "").trim().toLowerCase()}` : `id:${s.id}`;
+      const arr = map.get(key);
+      if (arr) arr.push(s);
+      else map.set(key, [s]);
+    }
+    return [...map.values()];
+  }, [risultati]);
+
   const clienti = useMemo(
     () => [...new Set((data ?? []).map((s) => s.cliente).filter(Boolean))].sort(),
     [data],
@@ -130,43 +141,52 @@ function ArchivioPage() {
 
       {!isLoading && (
         <section className="mt-8 space-y-3">
-          <h2 className="label-stamp">Lavori archiviati ({risultati.length})</h2>
-          {risultati.length === 0 && (
+          <h2 className="label-stamp">Lavori archiviati ({gruppi.length})</h2>
+          {gruppi.length === 0 && (
             <p className="text-sm text-muted-foreground">Nessun lavoro trovato.</p>
           )}
-          {risultati.map((s) => (
-            <div key={s.id} className="paper-panel rounded-md p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-lg font-semibold">{s.cliente || "Cliente da definire"}</h3>
-                <span className="label-stamp">{new Date(s.data).toLocaleDateString("it-IT")}</span>
+          {gruppi.map((g) => {
+            const capo = g[0];
+            const effettivo = g.reduce((t, s) => t + totaleEffettivo(s.righe_scheda ?? []), 0);
+            const assegnato = g.reduce((t, s) => t + (s.tempo_assegnato ?? 0), 0);
+            return (
+              <div key={capo.id} className="paper-panel rounded-md p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold">{capo.cliente || "Cliente da definire"}</h3>
+                  <span className="label-stamp">{new Date(capo.data).toLocaleDateString("it-IT")}</span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {capo.lavoro || "Lavorazione senza descrizione"}
+                  {capo.n_ord ? ` \u00b7 Ord. ${capo.n_ord}` : ""}
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                  <span>
+                    <span className="label-stamp">Effettivo</span>{" "}
+                    <strong className="font-display">{formatMinuti(effettivo)}</strong>
+                  </span>
+                  <span className="text-muted-foreground">
+                    <span className="label-stamp">Assegnato</span> {formatMinuti(assegnato)}
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {g.map((s) => (
+                    <Button key={s.id} asChild size="sm" variant="outline">
+                      <Link to="/scheda/$id" params={{ id: s.id }}>
+                        <span className="capitalize">{s.reparto}</span>
+                      </Link>
+                    </Button>
+                  ))}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => g.forEach((s) => ripristina.mutate(s.id))}
+                  >
+                    <ArchiveRestore className="size-4" /> Ripristina
+                  </Button>
+                </div>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {s.lavoro || "Lavorazione senza descrizione"}
-                {s.n_ord ? ` · Ord. ${s.n_ord}` : ""} · <span className="capitalize">{s.reparto}</span>
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-                <span>
-                  <span className="label-stamp">Effettivo</span>{" "}
-                  <strong className="font-display">
-                    {formatMinuti(totaleEffettivo(s.righe_scheda ?? []))}
-                  </strong>
-                </span>
-                <span className="text-muted-foreground">
-                  <span className="label-stamp">Assegnato</span> {formatMinuti(s.tempo_assegnato ?? 0)}
-                </span>
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/scheda/$id" params={{ id: s.id }}>
-                    Apri scheda
-                  </Link>
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => ripristina.mutate(s.id)}>
-                  <ArchiveRestore className="size-4" /> Ripristina
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </section>
       )}
     </main>
