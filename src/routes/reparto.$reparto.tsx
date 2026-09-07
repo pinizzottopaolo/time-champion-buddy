@@ -297,8 +297,8 @@ function CardLavoro({
     <div
       className={`sheet flex items-start gap-3 rounded-md border-l-4 p-4 ${
         verde
-          ? "border-l-emerald-600 border-emerald-600/40 bg-emerald-500/20"
-          : "border-l-red-600 border-red-600/40 bg-red-500/20"
+          ? "border-l-emerald-600 border-emerald-600/40"
+          : "border-l-red-600 border-red-600/40"
       }`}
       onPointerDown={inizioPressione}
       onPointerUp={finePressione}
