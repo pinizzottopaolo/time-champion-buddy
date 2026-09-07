@@ -225,7 +225,7 @@
   font-size: 0.6875rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background-color: oklch(0.55 0.2 27 / 12%);
+  background-color: transparent;
   color: oklch(0.5 0.2 27);
   border: 1px solid oklch(0.55 0.2 27 / 35%);
 }
@@ -240,7 +240,7 @@
   font-size: 0.6875rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background-color: oklch(0.6 0.15 155 / 12%);
+  background-color: transparent;
   color: oklch(0.48 0.14 155);
   border: 1px solid oklch(0.6 0.15 155 / 35%);
 }
