@@ -164,7 +164,7 @@ function RepartoCard({
         onClick={onApri}
         className="flex w-full flex-1 flex-col items-start gap-3 text-left focus-visible:outline-none"
       >
-        <span className="rounded-xl bg-white/15 p-3 ring-1 ring-white/25 backdrop-blur-sm">
+        <span className="p-1">
           {icona}
         </span>
         <span className="font-display text-xl font-semibold sm:text-3xl">{titolo}</span>
