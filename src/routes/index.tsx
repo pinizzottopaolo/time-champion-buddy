@@ -153,10 +153,12 @@ function RepartoCard({
   onFoto: () => void;
   occupato: boolean;
 }) {
+  const conf = variante === "confezione";
+  const tinta = conf ? "text-primary" : "text-accent";
   return (
     <div
-      className={`group relative flex h-full flex-col items-start gap-3 overflow-hidden rounded-2xl p-5 text-primary-foreground shadow-lg transition-all sm:p-7 ${
-        variante === "confezione" ? "tile-confezione" : "tile-stampa"
+      className={`sheet group relative flex h-full flex-col items-start gap-3 overflow-hidden rounded-2xl p-5 transition-all sm:p-7 ${
+        conf ? "border-primary/40" : "border-accent/40"
       }`}
     >
       <button
@@ -164,12 +166,10 @@ function RepartoCard({
         onClick={onApri}
         className="flex w-full flex-1 flex-col items-start gap-3 text-left focus-visible:outline-none"
       >
-        <span className="p-1">
-          {icona}
-        </span>
-        <span className="font-display text-xl font-semibold sm:text-3xl">{titolo}</span>
-        <span className="text-xs opacity-80 sm:text-sm">{descrizione}</span>
-        <span className="label-stamp mt-auto inline-flex items-center gap-1 pt-3 text-primary-foreground/90">
+        <span className={`p-1 ${tinta}`}>{icona}</span>
+        <span className={`font-display text-xl font-semibold sm:text-3xl ${tinta}`}>{titolo}</span>
+        <span className="text-xs text-muted-foreground sm:text-sm">{descrizione}</span>
+        <span className={`label-stamp mt-auto inline-flex items-center gap-1 pt-3 ${tinta}`}>
           Apri <ArrowRight className="size-3.5" />
         </span>
       </button>
@@ -178,7 +178,9 @@ function RepartoCard({
         type="button"
         onClick={onFoto}
         disabled={occupato}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white/15 px-3 py-2 text-xs font-medium ring-1 ring-white/25 transition-colors hover:bg-white/25 disabled:opacity-60 sm:text-sm"
+        className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-60 sm:text-sm ${tinta} ${
+          conf ? "border-primary/40 hover:bg-primary/10" : "border-accent/40 hover:bg-accent/10"
+        }`}
       >
         {occupato ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
         {occupato ? "Lettura…" : "Foto commessa"}
