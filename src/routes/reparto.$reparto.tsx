@@ -246,15 +246,13 @@ function Colonna({
   const Icona = verde ? PackageCheck : Hammer;
   return (
     <section
-      className={`rounded-xl border p-4 ${
-        verde
-          ? "border-emerald-600/60 bg-emerald-500/25"
-          : "border-red-600/60 bg-red-500/25"
+      className={`sheet rounded-xl border p-4 ${
+        verde ? "border-emerald-600/50" : "border-red-600/50"
       }`}
     >
       <h2 className="flex items-center gap-2">
         <Icona className={`size-5 ${verde ? "text-emerald-700" : "text-red-700"}`} />
-        <span className="label-stamp">{titolo}</span>
+        <span className={`label-stamp ${verde ? "text-emerald-700" : "text-red-700"}`}>{titolo}</span>
         <span className="text-xs text-muted-foreground">({conteggio})</span>
       </h2>
       <div className="mt-3 space-y-3">{children}</div>
