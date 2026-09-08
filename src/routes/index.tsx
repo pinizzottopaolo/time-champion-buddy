@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { LogOut, Package, Printer, ArrowRight, Camera, Loader2, Search } from "lucide-react";
+import { LogOut, Package, Printer, FileText, ArrowRight, Camera, Loader2, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,13 @@ import { creaSchedaEntrambiReparti } from "@/lib/schede";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Reparti — Confezione e Stampa | Tempi di lavorazione" },
+      { title: "Reparti — Prestampa, Confezione e Stampa | Tempi di lavorazione" },
       {
         name: "description",
         content:
-          "Scegli il reparto Confezione o Stampa e controlla i lavori in lavorazione e terminati, con foto della commessa e compilazione automatica.",
+          "Scegli il reparto Prestampa, Confezione o Stampa e controlla i lavori in lavorazione e terminati, con foto della commessa e compilazione automatica.",
       },
-      { property: "og:title", content: "Reparti Confezione e Stampa" },
+      { property: "og:title", content: "Reparti Prestampa, Confezione e Stampa" },
       {
         property: "og:description",
         content: "Lavori terminati in verde, in lavorazione in rosso. Foto della commessa e dati automatici.",
@@ -62,7 +62,7 @@ function Index() {
         note: dati.note,
       });
       qc.invalidateQueries({ queryKey: ["schede"] });
-      toast.success("Scheda creata in Confezione e Stampa");
+      toast.success("Scheda creata nei reparti");
       navigate({ to: "/scheda/$id", params: { id } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lettura della foto non riuscita");
@@ -73,26 +73,26 @@ function Index() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:py-16">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-16">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="label-stamp">Tipografia — gestione tempi</p>
           <h1 className="mt-1 text-3xl font-semibold sm:text-4xl">Reparti</h1>
         </div>
         <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={() => navigate({ to: "/archivio" })}>
-          <Search className="size-4" /> Archivio
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate({ to: "/auth" });
-          }}
-        >
-          <LogOut className="size-4" /> Esci
-        </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate({ to: "/archivio" })}>
+            <Search className="size-4" /> Archivio
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/auth" });
+            }}
+          >
+            <LogOut className="size-4" /> Esci
+          </Button>
         </div>
       </header>
 
@@ -100,7 +100,16 @@ function Index() {
         Seleziona il reparto per vedere i lavori in lavorazione e quelli terminati.
       </p>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5">
+      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5">
+        <RepartoCard
+          titolo="Prestampa"
+          descrizione="Grafica, cianografiche, matrici"
+          variante="prestampa"
+          icona={<FileText className="size-8 sm:size-10" />}
+          onApri={() => navigate({ to: "/reparto/$reparto", params: { reparto: "prestampa" } })}
+          onFoto={() => fileRef.current?.click()}
+          occupato={leggendo}
+        />
         <RepartoCard
           titolo="Confezione"
           descrizione="Taglio, legatoria, finitura"
@@ -148,18 +157,20 @@ function RepartoCard({
   titolo: string;
   descrizione: string;
   icona: React.ReactNode;
-  variante: "confezione" | "stampa";
+  variante: "prestampa" | "confezione" | "stampa";
   onApri: () => void;
   onFoto: () => void;
   occupato: boolean;
 }) {
   const conf = variante === "confezione";
-  const tinta = conf ? "text-primary" : "text-accent";
+  const prest = variante === "prestampa";
+  const tinta = prest ? "text-sky-500" : conf ? "text-primary" : "text-accent";
+  const borderClass = prest ? "border-sky-500/40" : conf ? "border-primary/40" : "border-accent/40";
+  const hoverBgClass = prest ? "hover:bg-sky-500/10" : conf ? "hover:bg-primary/10" : "hover:bg-accent/10";
+
   return (
     <div
-      className={`sheet group relative flex h-full flex-col items-start gap-3 overflow-hidden rounded-2xl p-5 transition-all sm:p-7 ${
-        conf ? "border-primary/40" : "border-accent/40"
-      }`}
+      className={`sheet group relative flex h-full flex-col items-start gap-3 overflow-hidden rounded-2xl p-5 transition-all sm:p-7 ${borderClass}`}
     >
       <button
         type="button"
@@ -178,9 +189,7 @@ function RepartoCard({
         type="button"
         onClick={onFoto}
         disabled={occupato}
-        className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-60 sm:text-sm ${tinta} ${
-          conf ? "border-primary/40 hover:bg-primary/10" : "border-accent/40 hover:bg-accent/10"
-        }`}
+        className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-60 sm:text-sm ${tinta} ${borderClass} ${hoverBgClass}`}
       >
         {occupato ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
         {occupato ? "Lettura…" : "Foto commessa"}
