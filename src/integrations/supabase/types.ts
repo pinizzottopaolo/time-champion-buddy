@@ -83,11 +83,13 @@ export type Database = {
         Row: {
           archiviata: boolean
           cliente: string
+          ciano: string
           colore: string
           completata: boolean
           created_at: string
           data: string
           firma: string
+          formato_carta: string
           fogli_prelevati: number | null
           fogli_stampati: number | null
           formato: string
@@ -96,29 +98,43 @@ export type Database = {
           gruppo_id: string | null
           id: string
           imballo_colli: number | null
+          imp_manuale: boolean
           lavoro: string
           n_ord: string
           n_ord_cliente: string
           note: string
           operatore: string
+          pinza_mm: number | null
+          pinza_pinza: boolean
+          pinza_squadra: boolean
           problemi: string
           quantita: number | null
+          resa: string
+          resa_bv: boolean
+          resa_fr: boolean
           reparto: string
+          taglio_netto: boolean
           tempo_assegnato: number | null
+          tempo_composizione_assegnato: number | null
+          tempo_composizione_log: Json
           tempo_effettivo: number | null
           tipo_carta: string
           tipo_stampa: string
+          verifica_ciano_lastre: string
+          dop_t_mm: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           archiviata?: boolean
           cliente?: string
+          ciano?: string
           colore?: string
           completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          formato_carta?: string
           fogli_prelevati?: number | null
           fogli_stampati?: number | null
           formato?: string
@@ -127,29 +143,43 @@ export type Database = {
           gruppo_id?: string | null
           id?: string
           imballo_colli?: number | null
+          imp_manuale?: boolean
           lavoro?: string
           n_ord?: string
           n_ord_cliente?: string
           note?: string
           operatore?: string
+          pinza_mm?: number | null
+          pinza_pinza?: boolean
+          pinza_squadra?: boolean
           problemi?: string
           quantita?: number | null
+          resa?: string
+          resa_bv?: boolean
+          resa_fr?: boolean
           reparto?: string
+          taglio_netto?: boolean
           tempo_assegnato?: number | null
+          tempo_composizione_assegnato?: number | null
+          tempo_composizione_log?: Json
           tempo_effettivo?: number | null
           tipo_carta?: string
           tipo_stampa?: string
+          verifica_ciano_lastre?: string
+          dop_t_mm?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           archiviata?: boolean
           cliente?: string
+          ciano?: string
           colore?: string
           completata?: boolean
           created_at?: string
           data?: string
           firma?: string
+          formato_carta?: string
           fogli_prelevati?: number | null
           fogli_stampati?: number | null
           formato?: string
@@ -158,18 +188,30 @@ export type Database = {
           gruppo_id?: string | null
           id?: string
           imballo_colli?: number | null
+          imp_manuale?: boolean
           lavoro?: string
           n_ord?: string
           n_ord_cliente?: string
           note?: string
           operatore?: string
+          pinza_mm?: number | null
+          pinza_pinza?: boolean
+          pinza_squadra?: boolean
           problemi?: string
           quantita?: number | null
+          resa?: string
+          resa_bv?: boolean
+          resa_fr?: boolean
           reparto?: string
+          taglio_netto?: boolean
           tempo_assegnato?: number | null
+          tempo_composizione_assegnato?: number | null
+          tempo_composizione_log?: Json
           tempo_effettivo?: number | null
           tipo_carta?: string
           tipo_stampa?: string
+          verifica_ciano_lastre?: string
+          dop_t_mm?: number | null
           updated_at?: string
           user_id?: string
         }

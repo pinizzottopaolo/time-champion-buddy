@@ -2,7 +2,23 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 import { OPERAZIONI } from "./operazioni";
 
-export type Scheda = Tables<"schede">;
+export type TempoComposizione = { id: string; data: string; ore: number };
+export type Scheda = Tables<"schede"> & {
+  tempo_composizione_assegnato: number | null;
+  tempo_composizione_log: TempoComposizione[];
+  formato_carta: string;
+  imp_manuale: boolean;
+  resa: string;
+  resa_bv: boolean;
+  resa_fr: boolean;
+  pinza_mm: number | null;
+  dop_t_mm: number | null;
+  taglio_netto: boolean;
+  pinza_squadra: boolean;
+  pinza_pinza: boolean;
+  ciano: "SI" | "NO";
+  verifica_ciano_lastre: string;
+};
 export type RigaScheda = Tables<"righe_scheda">;
 
 export type Reparto = "confezione" | "stampa" | "prestampa";

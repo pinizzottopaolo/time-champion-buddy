@@ -101,6 +101,7 @@ function SchedaPage() {
   );
   const totAss = testata.tempo_assegnato ?? 0;
   const isStampa = testata.reparto === "stampa";
+  const isPrestampa = testata.reparto === "prestampa";
   const colore = testata.colore ?? "";
   const coloreSel =
     colore === "CMYK" || colore === "Pantone" ? colore : colore === "" ? "" : "Altro";
@@ -139,7 +140,7 @@ function SchedaPage() {
       </Link>
 
       <h1 className="mt-3 text-2xl font-semibold sm:text-3xl">
-        Scheda lav. {isStampa ? "stampa" : "confezione"}
+        Scheda lav. {isStampa ? "stampa" : isPrestampa ? "prestampa" : "confezione"}
       </h1>
 
       {/* Testata */}
@@ -267,6 +268,130 @@ function SchedaPage() {
           )}
         </div>
       </section>
+
+      {isPrestampa && (
+        <section className="paper-panel mt-6 rounded-xl p-4 sm:p-5">
+          <h2 className="label-stamp">Dati Prestampa</h2>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Campo label="Tempo composizione (ore)">
+              <Input
+                inputMode="decimal"
+                value={testata.tempo_composizione_assegnato ?? ""}
+                onChange={(e) =>
+                  setTestata({
+                    ...testata,
+                    tempo_composizione_assegnato: numOrNull(e.target.value),
+                  })
+                }
+              />
+            </Campo>
+            <Campo label="Formato carta">
+              <Input
+                value={testata.formato_carta ?? ""}
+                onChange={(e) => setTestata({ ...testata, formato_carta: e.target.value })}
+              />
+            </Campo>
+            <label className="flex items-center gap-2 self-end pb-2 text-sm">
+              <Checkbox
+                checked={testata.imp_manuale ?? false}
+                onCheckedChange={(v) => setTestata({ ...testata, imp_manuale: v === true })}
+              />
+              Imp. manuale
+            </label>
+            <Campo label="Resa">
+              <Input
+                value={testata.resa ?? ""}
+                onChange={(e) => setTestata({ ...testata, resa: e.target.value })}
+              />
+            </Campo>
+            <div className="flex flex-wrap items-center gap-4 self-end pb-2 text-sm">
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={testata.resa_bv ?? false}
+                  onCheckedChange={(v) => setTestata({ ...testata, resa_bv: v === true })}
+                />
+                BV
+              </label>
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={testata.resa_fr ?? false}
+                  onCheckedChange={(v) => setTestata({ ...testata, resa_fr: v === true })}
+                />
+                FR
+              </label>
+            </div>
+            <Campo label="Pinza (mm)">
+              <Input
+                inputMode="numeric"
+                value={testata.pinza_mm ?? ""}
+                onChange={(e) => setTestata({ ...testata, pinza_mm: numOrNull(e.target.value) })}
+              />
+            </Campo>
+            <Campo label="Dop. T. (mm)">
+              <Input
+                inputMode="numeric"
+                value={testata.dop_t_mm ?? ""}
+                onChange={(e) => setTestata({ ...testata, dop_t_mm: numOrNull(e.target.value) })}
+              />
+            </Campo>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+            <span className="label-stamp">Opzioni taglio</span>
+            <label className="flex items-center gap-2">
+              <Checkbox
+                checked={testata.taglio_netto ?? false}
+                onCheckedChange={(v) => setTestata({ ...testata, taglio_netto: v === true })}
+              />
+              Taglio netto
+            </label>
+            <label className="flex items-center gap-2">
+              <Checkbox
+                checked={testata.pinza_squadra ?? false}
+                onCheckedChange={(v) => setTestata({ ...testata, pinza_squadra: v === true })}
+              />
+              Pinza squadra
+            </label>
+            <label className="flex items-center gap-2 sm:col-start-2">
+              <Checkbox
+                checked={testata.pinza_pinza ?? false}
+                onCheckedChange={(v) => setTestata({ ...testata, pinza_pinza: v === true })}
+              />
+              Pinza pinza
+            </label>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Campo label="Ciano SI/NO">
+              <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={testata.ciano ?? "NO"}
+                onChange={(e) =>
+                  setTestata({ ...testata, ciano: e.target.value as "SI" | "NO" })
+                }
+              >
+                <option value="NO">NO</option>
+                <option value="SI">SI</option>
+              </select>
+            </Campo>
+            <Campo label="Verifica Ciano/Lastre">
+              <Input
+                value={testata.verifica_ciano_lastre ?? ""}
+                onChange={(e) =>
+                  setTestata({ ...testata, verifica_ciano_lastre: e.target.value })
+                }
+              />
+            </Campo>
+          </div>
+          <div className="mt-4">
+            <Campo label="Note">
+              <Textarea
+                rows={2}
+                value={testata.note ?? ""}
+                onChange={(e) => setTestata({ ...testata, note: e.target.value })}
+              />
+            </Campo>
+          </div>
+        </section>
+      )}
 
       {/* Lavorazioni */}
       {!isStampa && GRUPPI.map((g) => (
@@ -440,13 +565,15 @@ function SchedaPage() {
           )}
         </div>
         <div className="mt-4 space-y-4">
-          <Campo label="Note">
-            <Textarea
-              rows={2}
-              value={testata.note ?? ""}
-              onChange={(e) => setTestata({ ...testata, note: e.target.value })}
-            />
-          </Campo>
+          {!isPrestampa && (
+            <Campo label="Note">
+              <Textarea
+                rows={2}
+                value={testata.note ?? ""}
+                onChange={(e) => setTestata({ ...testata, note: e.target.value })}
+              />
+            </Campo>
+          )}
           <Campo label="Problemi riscontrati">
             <Textarea
               rows={2}

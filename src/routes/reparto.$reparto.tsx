@@ -293,8 +293,8 @@ function CardLavoro({
     <div
       className={`flex items-start gap-3 rounded-md border border-l-4 p-4 ${
         verde
-          ? "border-l-emerald-700 border-emerald-700/50 bg-emerald-500/35"
-          : "border-l-red-700 border-red-700/50 bg-red-500/35"
+          ? "border-l-emerald-700 border-emerald-700/50 bg-emerald-100/80"
+          : "border-l-red-700 border-red-700/50 bg-red-100/80"
       }`}
       onPointerDown={inizioPressione}
       onPointerUp={finePressione}
@@ -333,6 +333,16 @@ function CardLavoro({
               <span className="label-stamp">Assegnato</span> {formatMinuti(ass)}
             </span>
           </div>
+          {s.reparto === "prestampa" && (
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-current/10 pt-3 text-xs sm:grid-cols-3">
+              <span><strong>Composizione</strong> {s.tempo_composizione_assegnato ?? "—"} h</span>
+              <span><strong>Carta</strong> {s.formato_carta || "—"}</span>
+              <span><strong>Resa</strong> {s.resa || "—"}{s.resa_bv ? " BV" : ""}{s.resa_fr ? " FR" : ""}</span>
+              <span><strong>Pinza</strong> {s.pinza_mm ?? "—"} mm</span>
+              <span><strong>Dop. T.</strong> {s.dop_t_mm ?? "—"} mm</span>
+              <span><strong>Ciano</strong> {s.ciano || "NO"}</span>
+            </div>
+          )}
         </Link>
 
         {onArchivia && (
