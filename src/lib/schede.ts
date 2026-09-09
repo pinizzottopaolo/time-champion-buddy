@@ -5,7 +5,7 @@ import { OPERAZIONI } from "./operazioni";
 export type Scheda = Tables<"schede">;
 export type RigaScheda = Tables<"righe_scheda">;
 
-export type Reparto = "confezione" | "stampa";
+export type Reparto = "confezione" | "stampa" | "prestampa";
 
 export async function listSchede(reparto?: Reparto, archiviate = false) {
   let q = supabase
@@ -51,7 +51,6 @@ export async function setArchiviata(id: string, archiviata: boolean) {
   if (error) throw error;
 }
 
-
 export async function getScheda(id: string) {
   const { data, error } = await supabase.from("schede").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
@@ -86,7 +85,6 @@ export async function creaScheda(
     await supabase.from("schede").update({ gruppo_id: data.id }).eq("id", data.id);
   }
 
-
   const righe: TablesInsert<"righe_scheda">[] = OPERAZIONI.map((op, i) => ({
     scheda_id: data.id,
     chiave: op.chiave,
@@ -98,15 +96,16 @@ export async function creaScheda(
   return data.id as string;
 }
 
-/** Crea la stessa commessa sia in confezione sia in stampa. Ritorna l'id di confezione. */
+/** Crea la stessa commessa in tutti i reparti. Ritorna l'id di confezione. */
 export async function creaSchedaEntrambiReparti(dati: Partial<Scheda> = {}) {
   const gruppo_id = crypto.randomUUID();
   const idConfezione = await creaScheda("confezione", { ...dati, gruppo_id });
   await creaScheda("stampa", { ...dati, gruppo_id });
+  await creaScheda("prestampa", { ...dati, gruppo_id });
   return idConfezione;
 }
 
-/** Dati della commessa condivisi tra confezione e stampa. */
+/** Dati della commessa condivisi tra i reparti. */
 const CAMPI_CONDIVISI = [
   "data",
   "cliente",
@@ -127,7 +126,7 @@ export async function salvaScheda(
   const { error } = await supabase.from("schede").update(testata).eq("id", id);
   if (error) throw error;
 
-  // Riporta i dati di commessa sulla scheda gemella dell'altro reparto
+  // Riporta i dati di commessa sulle schede gemelle degli altri reparti
   const gruppo = testata.gruppo_id;
   if (gruppo) {
     const condivisi: Partial<Scheda> = {};
@@ -143,7 +142,6 @@ export async function salvaScheda(
       if (e3) throw e3;
     }
   }
-
 
   for (const r of righe) {
     const { id: rigaId, scheda_id: _s, created_at: _c, ...campi } = r;
