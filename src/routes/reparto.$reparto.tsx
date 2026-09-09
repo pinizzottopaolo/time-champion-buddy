@@ -31,7 +31,6 @@ import { formatMinuti } from "@/lib/operazioni";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-
 export const Route = createFileRoute("/reparto/$reparto")({
   head: () => ({
     meta: [
@@ -54,7 +53,7 @@ export const Route = createFileRoute("/reparto/$reparto")({
 });
 
 function isReparto(v: string): v is Reparto {
-  return v === "confezione" || v === "stampa";
+  return v === "confezione" || v === "stampa" || v === "prestampa";
 }
 
 function RepartoPage() {
@@ -230,7 +229,6 @@ function RepartoPage() {
   );
 }
 
-
 function Colonna({
   titolo,
   tono,
@@ -344,6 +342,5 @@ function CardLavoro({
         )}
       </div>
     </div>
-
   );
 }
