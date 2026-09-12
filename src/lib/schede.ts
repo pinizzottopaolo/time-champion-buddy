@@ -24,8 +24,12 @@ export type RigaScheda = Tables<"righe_scheda">;
 export type Reparto = "confezione" | "stampa" | "prestampa";
 
 export async function caricaFotoCommessa(file: File) {
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData.user?.id;
+  if (!userId) throw new Error("Sessione scaduta: effettua nuovamente il login");
+
   const estensione = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const percorso = `commesse/${crypto.randomUUID()}.${estensione}`;
+  const percorso = `${userId}/commesse/${crypto.randomUUID()}.${estensione}`;
   const { error } = await supabase.storage.from("commesse-foto").upload(percorso, file, {
     contentType: file.type || "image/jpeg",
     upsert: false,
@@ -99,9 +103,13 @@ export async function creaScheda(
   reparto: Reparto = "confezione",
   dati: Partial<Scheda> = {},
 ) {
+  const { data: userData } = await supabase.auth.getUser();
+  const uid = userData.user?.id;
+  if (!uid) throw new Error("Sessione scaduta: effettua nuovamente il login");
+
   const { data, error } = await supabase
     .from("schede")
-    .insert({ user_id: null, reparto, ...dati } as TablesInsert<"schede">)
+    .insert({ user_id: uid, reparto, ...dati } as TablesInsert<"schede">)
     .select("id, gruppo_id")
     .single();
   if (error) throw error;

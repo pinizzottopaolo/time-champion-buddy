@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Package, Printer, FileText, ArrowRight, Camera, Loader2, Search } from "lucide-react";
+import { LogOut, Package, Printer, FileText, ArrowRight, Camera, Loader2, Search } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { estraiDatiCommessa } from "@/lib/ocr.functions";
 import { caricaFotoCommessa, creaSchedaEntrambiReparti } from "@/lib/schede";
@@ -30,11 +32,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { session, loading } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [leggendo, setLeggendo] = useState(false);
   const leggiFoto = useServerFn(estraiDatiCommessa);
+
+  useEffect(() => {
+    if (!loading && !session) navigate({ to: "/auth" });
+  }, [loading, session, navigate]);
 
   async function onFoto(file: File) {
     setLeggendo(true);
@@ -86,6 +93,16 @@ function Index() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => navigate({ to: "/archivio" })}>
             <Search className="size-4" /> Archivio
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/auth" });
+            }}
+          >
+            <LogOut className="size-4" /> Esci
           </Button>
         </div>
       </header>

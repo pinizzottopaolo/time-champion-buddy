@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArchivioIndexRouteImport } from './routes/archivio.index'
 import { Route as ArchivioOrdRouteImport } from './routes/archivio.$ord'
 import { Route as RepartoRepartoRouteImport } from './routes/reparto.$reparto'
@@ -18,6 +19,11 @@ import { Route as SchedaIdRouteImport } from './routes/scheda.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchivioIndexRoute = ArchivioIndexRouteImport.update({
@@ -43,6 +49,7 @@ const SchedaIdRoute = SchedaIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/archivio/$ord': typeof ArchivioOrdRoute
   '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/archivio/$ord': typeof ArchivioOrdRoute
   '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/archivio/$ord': typeof ArchivioOrdRoute
   '/reparto/$reparto': typeof RepartoRepartoRoute
   '/scheda/$id': typeof SchedaIdRoute
@@ -66,12 +75,24 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/archivio/$ord' | '/reparto/$reparto' | '/scheda/$id' | '/archivio/'
+    | '/'
+    | '/auth'
+    | '/archivio/$ord'
+    | '/reparto/$reparto'
+    | '/scheda/$id'
+    | '/archivio/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/archivio/$ord' | '/reparto/$reparto' | '/scheda/$id' | '/archivio'
+  to:
+    | '/'
+    | '/auth'
+    | '/archivio/$ord'
+    | '/reparto/$reparto'
+    | '/scheda/$id'
+    | '/archivio'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/archivio/$ord'
     | '/reparto/$reparto'
     | '/scheda/$id'
@@ -80,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   ArchivioOrdRoute: typeof ArchivioOrdRoute
   RepartoRepartoRoute: typeof RepartoRepartoRoute
   SchedaIdRoute: typeof SchedaIdRoute
@@ -93,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/archivio/': {
@@ -128,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   ArchivioOrdRoute: ArchivioOrdRoute,
   RepartoRepartoRoute: RepartoRepartoRoute,
   SchedaIdRoute: SchedaIdRoute,
