@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArchiveRestore, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { getScheda, listArchivio, setArchiviata, totaleEffettivo } from "@/lib/schede";
 import { etichettaOperazione, formatMinuti } from "@/lib/operazioni";
 import { Button } from "@/components/ui/button";
@@ -42,18 +41,13 @@ function Dato({ label, valore }: { label: string; valore?: string | number | nul
 
 function DettaglioArchivio() {
   const { ord } = Route.useParams();
-  const { session, loading } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
-
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["archivio"],
     queryFn: listArchivio,
-    enabled: !!session,
+    enabled: true,
   });
 
   const schede = useMemo(() => {
@@ -68,7 +62,7 @@ function DettaglioArchivio() {
   const { data: dettagli } = useQuery({
     queryKey: ["archivio-dettagli", ids],
     queryFn: async () => Promise.all(schede.map((s) => getScheda(s.id))),
-    enabled: !!session && schede.length > 0,
+    enabled: schede.length > 0,
   });
 
   const ripristina = useMutation({

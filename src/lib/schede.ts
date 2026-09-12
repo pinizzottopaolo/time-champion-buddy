@@ -86,13 +86,9 @@ export async function creaScheda(
   reparto: Reparto = "confezione",
   dati: Partial<Scheda> = {},
 ) {
-  const { data: userData } = await supabase.auth.getUser();
-  const uid = userData.user?.id;
-  if (!uid) throw new Error("Sessione scaduta");
-
   const { data, error } = await supabase
     .from("schede")
-    .insert({ user_id: uid, reparto, ...dati } as TablesInsert<"schede">)
+    .insert({ user_id: null, reparto, ...dati } as TablesInsert<"schede">)
     .select("id, gruppo_id")
     .single();
   if (error) throw error;

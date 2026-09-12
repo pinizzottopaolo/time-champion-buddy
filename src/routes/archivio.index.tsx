@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArchiveRestore, ArrowLeft, Search, Users, Wrench } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { listArchivio, setArchiviata, totaleEffettivo } from "@/lib/schede";
 import { formatMinuti } from "@/lib/operazioni";
 import { Button } from "@/components/ui/button";
@@ -34,20 +33,14 @@ export const Route = createFileRoute("/archivio/")({
 type Filtro = "tutti" | "cliente" | "lavoro";
 
 function ArchivioPage() {
-  const { session, loading } = useAuth();
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("tutti");
 
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
-
   const { data, isLoading } = useQuery({
     queryKey: ["archivio"],
     queryFn: listArchivio,
-    enabled: !!session,
+    enabled: true,
   });
 
   const ripristina = useMutation({

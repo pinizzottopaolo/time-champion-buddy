@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import {
   eliminaScheda,
   getScheda,
@@ -61,24 +60,19 @@ function numOrNull(v: string): number | null {
 
 function SchedaPage() {
   const { id } = Route.useParams();
-  const { session, loading } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
-
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["scheda", id],
     queryFn: () => getScheda(id),
-    enabled: !!session,
+    enabled: true,
   });
 
   const { data: clienti } = useQuery({
     queryKey: ["clienti"],
     queryFn: listClienti,
-    enabled: !!session,
+    enabled: true,
   });
 
   const [testata, setTestata] = useState<Partial<Scheda>>({});
