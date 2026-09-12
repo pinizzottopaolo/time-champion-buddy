@@ -44,9 +44,17 @@ function createSupabaseClient() {
     process.env['SUPABASE_ANON_KEY']?.trim() ||
     process.env['SUPABASE_PUBLISHABLE_KEY']?.trim();
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  let validSupabaseUrl = false;
+  try {
+    const parsedUrl = SUPABASE_URL ? new URL(SUPABASE_URL) : null;
+    validSupabaseUrl = parsedUrl?.protocol === 'https:' && parsedUrl.hostname.endsWith('.supabase.co') || false;
+  } catch {
+    validSupabaseUrl = false;
+  }
+
+  if (!validSupabaseUrl || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
-      ...(!SUPABASE_URL ? ['VITE_SUPABASE_URL'] : []),
+      ...(!validSupabaseUrl ? ['VITE_SUPABASE_URL (URL Supabase non valido)'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY
         ? ['VITE_SUPABASE_ANON_KEY (o VITE_SUPABASE_PUBLISHABLE_KEY)']
         : []),
