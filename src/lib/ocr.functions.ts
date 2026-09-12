@@ -28,7 +28,10 @@ export const estraiDatiCommessa = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("Servizio di lettura non configurato");
+    if (!apiKey) {
+      console.warn("[OCR] LOVABLE_API_KEY non configurata: creo una scheda vuota.");
+      return VUOTO;
+    }
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

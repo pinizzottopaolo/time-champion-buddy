@@ -23,6 +23,19 @@ export type RigaScheda = Tables<"righe_scheda">;
 
 export type Reparto = "confezione" | "stampa" | "prestampa";
 
+export async function caricaFotoCommessa(file: File) {
+  const estensione = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const percorso = `commesse/${crypto.randomUUID()}.${estensione}`;
+  const { error } = await supabase.storage.from("commesse-foto").upload(percorso, file, {
+    contentType: file.type || "image/jpeg",
+    upsert: false,
+  });
+  if (error) throw error;
+
+  const { data } = supabase.storage.from("commesse-foto").getPublicUrl(percorso);
+  return data.publicUrl;
+}
+
 export async function listSchede(reparto?: Reparto, archiviate = false) {
   let q = supabase
     .from("schede")

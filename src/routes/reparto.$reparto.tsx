@@ -77,7 +77,12 @@ function RepartoPage() {
       qc.invalidateQueries({ queryKey: ["schede"] });
       navigate({ to: "/scheda/$id", params: { id } });
     },
-    onError: () => toast.error("Impossibile creare la scheda"),
+    onError: (err) =>
+      toast.error(
+        err instanceof Error
+          ? `Impossibile creare la scheda: ${err.message}`
+          : "Impossibile creare la scheda",
+      ),
   });
 
   const toggle = useMutation({

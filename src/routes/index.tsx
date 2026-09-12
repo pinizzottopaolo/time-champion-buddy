@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Package, Printer, FileText, ArrowRight, Camera, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { estraiDatiCommessa } from "@/lib/ocr.functions";
-import { creaSchedaEntrambiReparti } from "@/lib/schede";
+import { caricaFotoCommessa, creaSchedaEntrambiReparti } from "@/lib/schede";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,6 +39,16 @@ function Index() {
   async function onFoto(file: File) {
     setLeggendo(true);
     try {
+      let fotoUrl: string | undefined;
+      try {
+        fotoUrl = await caricaFotoCommessa(file);
+      } catch (err) {
+        toast.warning(
+          err instanceof Error
+            ? `Foto non archiviata: ${err.message}`
+            : "Foto non archiviata nello storage",
+        );
+      }
       const dataUrl = await new Promise<string>((resolve, reject) => {
         const fr = new FileReader();
         fr.onload = () => resolve(String(fr.result));
@@ -53,6 +63,7 @@ function Index() {
         n_ord_cliente: dati.n_ord_cliente,
         operatore: dati.operatore,
         note: dati.note,
+        foto_url: fotoUrl ?? null,
       });
       qc.invalidateQueries({ queryKey: ["schede"] });
       toast.success("Scheda creata nei reparti");
