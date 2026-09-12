@@ -36,8 +36,11 @@ export async function caricaFotoCommessa(file: File) {
   });
   if (error) throw error;
 
-  const { data } = supabase.storage.from("commesse-foto").getPublicUrl(percorso);
-  return data.publicUrl;
+  const { data, error: signedUrlError } = await supabase.storage
+    .from("commesse-foto")
+    .createSignedUrl(percorso, 60 * 60 * 24 * 365);
+  if (signedUrlError) throw signedUrlError;
+  return data.signedUrl;
 }
 
 export async function listSchede(reparto?: Reparto, archiviate = false) {
